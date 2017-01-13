@@ -97,6 +97,7 @@ var routers = [
   require('./routes/users.js'),
   require('./routes/forgot-password.js'),
   require('./routes/password-reset.js'),
+  require('./routes/index-models.js'),
   require('./routes/connections.js'),
   require('./routes/queries.js'),
   require('./routes/query-result.js'),

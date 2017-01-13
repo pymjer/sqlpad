@@ -102,12 +102,13 @@ var App = React.createClass({
       <div>
         <Navbar inverse fluid fixedTop>
           <Nav>
-            <NavItem eventKey={1} onClick={navigateToClickHandler('/queries')} >Queries</NavItem>
+            <NavItem eventKey={1} onClick={navigateToClickHandler('/queries')} >所有查询</NavItem>
             {/*
               NOTE: /queries/new is *NOT* handled by page.js.
               clicking new while on new creates weirdness that needs to be worked out.
             */}
-            <NavItem eventKey={2} href={this.props.config.baseUrl + '/queries/new'}>New Query</NavItem>
+            <NavItem eventKey={2} href={this.props.config.baseUrl + '/queries/new'}>新建查询</NavItem>
+            <NavItem eventKey={3} onClick={navigateToClickHandler('/models')}>索引列表</NavItem>
           </Nav>
           <Nav pullRight>
             {updateNotification()}

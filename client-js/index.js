@@ -34,6 +34,7 @@ function init (appData) {
   var QueryTableOnly = require('./QueryTableOnly.js')
   var QueryChartOnly = require('./QueryChartOnly.js')
   var FullscreenMessage = require('./FullscreenMessage.js')
+  var IndexModelList = require('./IndexModelList.js')
 
   function getAppData (ctx, next) {
     fetchJson('GET', 'api/app')
@@ -124,6 +125,16 @@ function init (appData) {
       document.getElementById('root')
     )
   })
+
+    page('/models', mustBeAuthenticated, function (ctx) {
+        document.title = 'SqlPad - Models'
+        ReactDOM.render(
+            <App config={ctx.config} currentUser={ctx.currentUser}>
+                <IndexModelList />
+            </App>,
+            document.getElementById('root')
+        )
+    })
 
   page('/signin', function (ctx) {
     document.title = 'SqlPad - Sign In'
