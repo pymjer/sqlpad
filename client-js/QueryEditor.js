@@ -134,6 +134,34 @@ var QueryDetailsModal = React.createClass({
   }
 })
 
+var QueryRepairModal = React.createClass({
+  getInitialState: function () {
+    return {
+      showModal: false
+    }
+  },
+  close: function () {
+    this.setState({ showModal: false })
+  },
+  open: function () {
+    this.setState({ showModal: true })
+  },
+  render: function () {
+    return (
+      <Modal onEntered={this.onEntered} animation show={this.state.showModal} onHide={this.close} >
+        <Modal.Header closeButton />
+        <Modal.Body>
+          <span>确定修复sql结果数据吗？</span>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={this.props.repairQuery}>确定</Button>
+          <Button onClick={this.close}>关闭</Button>
+        </Modal.Footer>
+      </Modal>
+    )
+  }
+})
+
 var QueryEditor = React.createClass({
   loadConnectionsFromServer: function () {
     fetchJson('GET', this.props.config.baseUrl + '/api/connections/')
@@ -178,6 +206,7 @@ var QueryEditor = React.createClass({
       availableTags: [],
       isSaving: false,
       isRunning: false,
+      isRepairing: false,
       isDirty: false,
       runQueryStartTime: undefined,
       queryResult: undefined,
@@ -303,6 +332,16 @@ var QueryEditor = React.createClass({
         console.error(ex.toString())
         Alert.error('Something is broken')
       })
+  },
+  queryRepairsModal: undefined,
+  openQueryRepairModal: function () {
+    this.queryRepairsModal.open()
+  },
+  repairQuery: function () {
+    var query = this.state.query
+    this.setState({isRepairing: false})
+    this.queryRepairsModal.close()
+    Alert.success(query.queryText + " 修复成功！")
   },
   loadTagsFromServer: function () {
     fetchJson('GET', this.props.config.baseUrl + '/api/tags')
@@ -437,13 +476,14 @@ var QueryEditor = React.createClass({
                 </NavItem>
               </Nav>
               <Form inline className='navbar-form' style={tabsFormStyle}>
-                <Button className='QueryEditorSubheaderItem'
-                  onClick={this.saveQuery}
-                  disabled={this.state.isSaving}>
+                <Button className='QueryEditorSubheaderItem' onClick={this.saveQuery} disabled={this.state.isSaving}>
                   <span className='shortcut-letter'>S</span>{this.state.isSaving ? 'aving' : 'ave'}
                 </Button>
                 <Button className='QueryEditorSubheaderItem' onClick={this.runQuery} disabled={this.state.isRunning}>
                   <span className='shortcut-letter'>R</span>{this.state.isRunning ? 'unning' : 'un'}
+                </Button>
+                <Button className='QueryEditorSubheaderItem' onClick={this.openQueryRepairModal} disabled={this.state.isRepairing}>
+                  <span className='shortcut-letter'>R</span>{this.state.isRepairing ? 'epairing' : 'epair'}
                 </Button>
                 <ControlLabel onClick={this.openQueryDetailsModal} className='QueryEditorSubheaderItem QueryEditorQueryName'>{(this.state.query.name ? this.state.query.name : '(click to name query)')}</ControlLabel>
                 <QueryDetailsModal
@@ -454,6 +494,11 @@ var QueryEditor = React.createClass({
                   tagOptions={tagOptions}
                   ref={(ref) => {
                     this.queryDetailsModal = ref
+                  }} />
+                <QueryRepairModal
+                  repairQuery={this.repairQuery}
+                  ref={(ref) => {
+                    this.queryRepairsModal = ref
                   }} />
               </Form>
             </Row>
